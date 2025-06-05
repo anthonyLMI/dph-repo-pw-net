@@ -404,3 +404,67 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Playwright output
+playwright-report/
+test-results/
+trace.zip
+*.zip
+
+# Playwright trace, videos, screenshots
+*.webm
+*.png
+*.mp4
+*.log
+traces/
+screenshots/
+videos/
+
+# MSTest artifacts
+TestResults/
+*.trx
+
+# Optional: custom folders
+Logs/
+Screenshots/
+
+# Test Results
+TestResults/
+[Tt]est[Rr]esult*/
+
+# Playwright-specific
+playwright-report/
+test-results/
+playwright/.cache/
+.playwright-snapshots/
+Reports/screenshots/
+Reports/traces/
+Reports/videos/
+
+#--------------------------------------
+# OS / Editor files
+#--------------------------------------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+#--------------------------------------
+# Git conflict files
+#--------------------------------------
+*.orig
+*.rej
+
+#--------------------------------------
+# NuGet Packages (optional, if you commit packages folder)
+#--------------------------------------
+#packages/
+*.nupkg
+*.snupkg
+
+#--------------------------------------
+# Environment / secrets (you should not commit these)
+#--------------------------------------
+.env
+*.secrets.json
