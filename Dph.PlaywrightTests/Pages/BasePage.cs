@@ -8,8 +8,8 @@ public class BasePage
 {
     // Protected properties
     protected IPage Page;
-    public PageTest PageTest;
-    protected readonly string BaseUrl;
+    protected PageTest PageTest;
+	protected readonly string BaseUrl;
 	protected readonly int DefaultTimeout = 30000; // 30 seconds
 	protected static ExtentSparkReporter Reports { get; private set; } = null!;
 	protected static ExtentReports Extent { get; private set; } = null!;
@@ -43,7 +43,8 @@ public class BasePage
 	{
 		if (Extent == null)
 		{
-			Reports = new ExtentSparkReporter("Reports/index.html");
+			string reportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "index.html");
+			Reports = new ExtentSparkReporter(reportPath);
 			Extent = new ExtentReports();
 			Extent.AttachReporter(Reports);
 		}
