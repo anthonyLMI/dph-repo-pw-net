@@ -9,6 +9,7 @@ public class LoginPage : BasePage
 	private ILocator TxtEmailSelector => Page.Locator("[data-qa='login-email-input']"); //#dph-login-email
 	private ILocator TxtPasswordSelector => Page.Locator("[data-qa='login-password-input']"); //#dph-login-pass
 	private ILocator BtnLoginSelector => Page.Locator("button[type='submit']"); //#dph-login-submit-btn
+	
 	private ILocator BtnMyPostsSelector => Page.Locator("//ul[1]//li[2]");
 	public LoginPage(IPage page) : base(page)
 	{
@@ -52,6 +53,7 @@ public class LoginPage : BasePage
 		await ClickMyPostsButtonAsync();
 	}
 
-	// Verification Methods
+	// Access the locators for testing purposes
+
 
 }
