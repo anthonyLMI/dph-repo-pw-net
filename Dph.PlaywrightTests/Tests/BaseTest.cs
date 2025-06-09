@@ -10,38 +10,40 @@ public class BaseTest
 {
 	// Playwright Objects
 	protected IPage Page { get; private set; } = null!;
+	//protected PageTest PageTest { get; private set; } = null!;
+	public LoginPage LoginPage { get; private set; }
 	protected IBrowser Browser { get; private set; } = null!;
-	protected IBrowserContext BrowserContext { get; private set; } = null!;
-	public TestContext TestContext { get; private set; } = null!;
-	//protected IPlaywright Playwright { get; private set; } = null!;
+	protected IBrowserContext Context { get; private set; } = null!;
+	protected static IPlaywright Playwright { get; private set; } = null!;
 
 	[TestInitialize]
 	public async Task TestInitialize()
 	{
 		// Initialize Playwright
-		var playwright = await Playwright.CreateAsync();
+		Playwright = await Microsoft.Playwright.Playwright.CreateAsync(); // Create Playwright instance
 
 		// Launch the browser with configured options
-		Browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+		Browser = await Playwright.Webkit.LaunchAsync(new BrowserTypeLaunchOptions
 		{
-			Headless = true, // Set to false if you want to see the browser UI during tests
+			Headless = false, // Set to false if you want to see the browser UI during tests
 			SlowMo = 50, // Optional: slows down operations by 50ms for better debugging
 			Args = ["--start-maximized"]
 		});
 
-		BrowserContext = await Browser.NewContextAsync(new BrowserNewContextOptions
+		// Create a new browser context without viewport size
+		Context = await Browser.NewContextAsync(new BrowserNewContextOptions
 		{
-			ViewportSize = new ViewportSize { Width = 1280, Height = 720 }, // Set a default viewport size
+			//ViewportSize = new ViewportSize { Width = 1280, Height = 720 }, // Set a default viewport size
 			RecordVideoDir = "videos/", // Optional: record videos of the tests
-			AcceptDownloads = true // Enable downloads in the context
+			AcceptDownloads = true, // Enable downloads in the context
 
 		});
 
 		// Configure timeouts
-		BrowserContext.SetDefaultTimeout(30000); // 30 seconds
+		Context.SetDefaultTimeout(30000); // 30 seconds
 
 		// Enable request/response logging (optional)
-		await BrowserContext.RouteAsync("**/*", async route =>
+		await Context.RouteAsync("**/*", async route =>
 		{
 			// Log URL (optional)
 			Console.WriteLine($"Request: {route.Request.Method} {route.Request.Url}");
@@ -49,14 +51,16 @@ public class BaseTest
 		});
 
 		// Create a new page in the context
-		Page = await BrowserContext.NewPageAsync();
+		Page = await Context.NewPageAsync();
 
 		// Page Object Setup
+		LoginPage = new(Page);
 
 		// Login to app
+		await LoginPage.NavigateToLoginPageAsync(); // Navigate to the login page
 
 		// Setup tracing for debugging failed tests
-		await BrowserContext.Tracing.StartAsync(new TracingStartOptions
+		await Context.Tracing.StartAsync(new TracingStartOptions
 		{
 			Screenshots = true, // Capture screenshots on failure
 			Snapshots = true, // Capture DOM snapshots on failure
@@ -71,7 +75,7 @@ public class BaseTest
 		try
 		{
 			// Take screenshot on test failure
-			if (TestContext.CurrentTestOutcome != UnitTestOutcome.Failed)
+			if (TestContext.CurrentTestOutcome != UnitTestOutcome.Passed)
 			{
 				var screenshotPath = $"screenshot/test-failure--{TestContext.TestName}--{DateTime.Now:yyyyMMddHHmmss}.png";
 				await Page.ScreenshotAsync(new PageScreenshotOptions
@@ -81,7 +85,7 @@ public class BaseTest
 				});
 
 				// Store tracing data
-				await BrowserContext.Tracing.StopAsync(new TracingStopOptions
+				await Context.Tracing.StopAsync(new TracingStopOptions
 				{
 					Path = $"traces/trace--{TestContext.TestName}.zip" // Save the trace file
 				});
@@ -98,17 +102,19 @@ public class BaseTest
 		finally
 		{
 			// Disp[ose of Playwright objects
-			if(BrowserContext != null) await BrowserContext.CloseAsync();
+			if(Context != null) await Context.CloseAsync();
 			if(Browser != null) await Browser.DisposeAsync();
 		}
 
-		//[ClassCleanup]
-		//public static void ClassCleanup()
-		//{
-		//	// Dispose of Playwright if needed
-		//	IPlaywright playwright;
-		//	playwright.Dispose();
-		//	//Playwright?.Dispose();
-		//}
 	}
+
+	[ClassCleanup]
+	public static void ClassCleanup()
+	{
+		// Dispose of Playwright if needed
+		Playwright?.Dispose();
+	}
+
+	// TestContext for test information
+	public TestContext TestContext { get; set; }
 }

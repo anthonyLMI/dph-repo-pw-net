@@ -5,15 +5,15 @@ namespace Dph.PlaywrightTests;
 public class BasePage
 {
     // Protected properties
-    protected IPage Page { get; private set; } = null!;
-    protected PageTest PageTest { get; private set; } = null!;
+    protected IPage Page;
+    //protected PageTest PageTest;
     protected readonly string BaseUrl;
 	protected readonly int DefaultTimeout = 30000; // 30 seconds
     
-    public BasePage(IPage page, PageTest pageTest)
+    public BasePage(IPage page)
     {
-        Page = page ?? throw new ArgumentNullException(nameof(page));
-		PageTest = pageTest ?? throw new ArgumentNullException(nameof(pageTest));
+        Page = page;
+		//PageTest = pageTest;
 	}
 
     public virtual async Task NavigateToAsync(string url ="")

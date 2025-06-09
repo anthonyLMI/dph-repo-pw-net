@@ -1,14 +1,16 @@
 using Microsoft.Playwright;
+using System.Runtime.InteropServices;
 
 namespace Dph.PlaywrightTests;
 
 public class LoginPage : BasePage
 {
 	// Selectors for the elements on the login page
-	private ILocator TxtEmailSelector => Page.Locator("#dph-login-email");
-	private ILocator TxtPasswordSelector => Page.Locator("#dph-login-pass");
-	private ILocator BtnLoginSelector => Page.Locator("#dph-login-submit-btn");
-	public LoginPage(IPage page, PageTest pageTest) : base(page, pageTest)
+	private ILocator TxtEmailSelector => Page.Locator("[data-qa='login-email-input']"); //#dph-login-email
+	private ILocator TxtPasswordSelector => Page.Locator("[data-qa='login-password-input']"); //#dph-login-pass
+	private ILocator BtnLoginSelector => Page.Locator("button[type='submit']"); //#dph-login-submit-btn
+	private ILocator BtnMyPostsSelector => Page.Locator("//ul[1]//li[2]");
+	public LoginPage(IPage page) : base(page)
 	{
 		// Initialize the page elements here if needed
 	}
@@ -18,7 +20,7 @@ public class LoginPage : BasePage
 
 	public async Task NavigateToLoginPageAsync()
 	{
-		await NavigateToAsync("https://staging.deliveries.ph/");
+		await NavigateToAsync("https://staging.web.deliveries.ph/login");
 	}
 
 	// Action Methods
@@ -37,10 +39,19 @@ public class LoginPage : BasePage
 		await BtnLoginSelector.ClickAsync();
 	}
 
+	public async Task ClickMyPostsButtonAsync()
+	{
+		await BtnMyPostsSelector.ClickAsync();
+	}
+
 	public async Task LoginToWebApplication(string email, string password)
 	{
 		await EnterEmailAsync(email);
 		await EnterPasswordAsync(password);
 		await ClickLoginButtonAsync();
+		await ClickMyPostsButtonAsync();
 	}
+
+	// Verification Methods
+
 }
