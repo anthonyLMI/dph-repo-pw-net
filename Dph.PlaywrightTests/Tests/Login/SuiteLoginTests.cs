@@ -11,8 +11,7 @@ public class SuiteLoginTests : BaseTest
     [TestCategory("Login")]
 	public async Task VerifyInputValidCredentials()
     {
-        //await LoginPage.NavigateToLoginPageAsync();
         await LoginPage.LoginToWebApplication("rm@qa.fleet.ph", "LMI@2020");
-
+        await LoginAssertions.ShoulBeDisplayPage();
 	}
 }
