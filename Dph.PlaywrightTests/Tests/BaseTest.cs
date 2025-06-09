@@ -11,7 +11,9 @@ public class BaseTest
 	// Playwright Objects
 	protected IPage Page { get; private set; } = null!;
 	//protected PageTest PageTest { get; private set; } = null!;
-	public LoginPage LoginPage { get; private set; }
+	public LoginPage LoginPage { get; private set; } = null!;
+	public OrderPage OrderPage { get; private set; } = null!; // Initialize OrderPage to null
+	public LoginAssertions LoginAssertions { get; private set; } = null!;
 	protected IBrowser Browser { get; private set; } = null!;
 	protected IBrowserContext Context { get; private set; } = null!;
 	protected static IPlaywright Playwright { get; private set; } = null!;
@@ -23,7 +25,7 @@ public class BaseTest
 		Playwright = await Microsoft.Playwright.Playwright.CreateAsync(); // Create Playwright instance
 
 		// Launch the browser with configured options
-		Browser = await Playwright.Webkit.LaunchAsync(new BrowserTypeLaunchOptions
+		Browser = await Playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
 		{
 			Headless = false, // Set to false if you want to see the browser UI during tests
 			SlowMo = 50, // Optional: slows down operations by 50ms for better debugging
@@ -54,7 +56,10 @@ public class BaseTest
 		Page = await Context.NewPageAsync();
 
 		// Page Object Setup
+		// Initialize Page with the current page
 		LoginPage = new(Page);
+		OrderPage = new(Page); 
+		LoginAssertions = new(Page);
 
 		// Login to app
 		await LoginPage.NavigateToLoginPageAsync(); // Navigate to the login page
